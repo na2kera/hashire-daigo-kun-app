@@ -91,7 +91,8 @@ export class PlayScene extends Phaser.Scene {
     cam.startFollow(this.player, true); // 第2引数 roundPixels（§12.1）
     cam.setBackgroundColor("#1b1b2f");
 
-    this.stick = new VirtualStick(this, 1_000_000);
+    // 解除（指を離す・blur・hidden・resize）と同時に止める。halt() は ended 後に呼ばれても無害
+    this.stick = new VirtualStick(this, 1_000_000, () => this.player.halt());
     this.keyboard = new KeyboardInput(this);
 
     // 時計は物理演算（取得判定）より先に進める：締切を取得より優先する（§12.4）
@@ -106,8 +107,8 @@ export class PlayScene extends Phaser.Scene {
   /** PRE_UPDATE（物理の UPDATE より前）で残り時間を評価する */
   private tick(_time: number, delta: number): void {
     if (this.ended) return;
-    // タブ復帰などで delta が跳ねても一気に進みすぎないようにする
-    this.elapsedMs += Math.min(delta, 100);
+    // 物理と同じ delta をそのまま積算する（極端な delta は Phaser の TimeStep が平滑化する。§13）
+    this.elapsedMs += delta;
     const remainingMs = Math.max(0, GAME_SECONDS * 1000 - this.elapsedMs);
     const timeLeft = Math.ceil(remainingMs / 1000);
     if (this.registry.get(REG.timeLeft) !== timeLeft) {

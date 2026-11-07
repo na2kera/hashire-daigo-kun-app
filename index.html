@@ -25,16 +25,22 @@
         user-select: none;
         -webkit-touch-callout: none;
       }
-      #game {
+      /* iOS のノッチ・ホームバーを避ける（viewport-fit=cover とセット）。
+         safe-area は外側の #shell が受け持ち、Phaser の親 #game には padding を付けない
+         （ScaleManager は親を padding 込みで測るため、付けると canvas がはみ出す） */
+      #shell {
         box-sizing: border-box;
         width: 100%;
         height: 100vh;
         height: 100dvh;
-        /* iOS のノッチ・ホームバーを避ける（viewport-fit=cover とセット） */
         padding-top: env(safe-area-inset-top);
         padding-right: env(safe-area-inset-right);
         padding-bottom: env(safe-area-inset-bottom);
         padding-left: env(safe-area-inset-left);
+      }
+      #game {
+        width: 100%;
+        height: 100%;
       }
       canvas {
         image-rendering: pixelated;
@@ -44,7 +50,9 @@
     </style>
   </head>
   <body>
-    <div id="game"></div>
+    <div id="shell">
+      <div id="game"></div>
+    </div>
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>

@@ -21,7 +21,10 @@ export function unlockAudio(): void {
       if (!Ctor) return;
       ctx = new Ctor();
     }
-    if (ctx.state === "suspended") {
+    // iOS の通話割込み後などは "interrupted" になる（型定義に無いので文字列で比較）。
+    // running / closed 以外ならすべて resume を試みる
+    const state: string = ctx.state;
+    if (state !== "running" && state !== "closed") {
       ctx.resume().catch(() => undefined);
     }
   } catch {

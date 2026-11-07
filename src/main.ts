@@ -13,18 +13,12 @@ import { ResultScene } from "./scenes/ResultScene";
 // どの画面でも、ユーザー操作のたびに AudioContext の resume を試みる（iOS Safari 対策）
 installAudioUnlock();
 
-/** #game の内容領域（safe-area の padding を除く）のサイズ */
-function parentContentSize(parent: HTMLElement): { width: number; height: number } {
-  const style = window.getComputedStyle(parent);
-  const px = (v: string): number => Number.parseFloat(v) || 0;
-  return {
-    width: parent.clientWidth - px(style.paddingLeft) - px(style.paddingRight),
-    height: parent.clientHeight - px(style.paddingTop) - px(style.paddingBottom),
-  };
-}
-
+// #game は padding なし（safe-area は外側の #shell が受け持つ。DESIGN.md §12.1）なので
+// client サイズがそのまま Phaser の FIT 計算に使われる領域になる
 const parent = document.getElementById("game");
-const size = parent ? parentContentSize(parent) : { width: window.innerWidth, height: window.innerHeight };
+const size = parent
+  ? { width: parent.clientWidth, height: parent.clientHeight }
+  : { width: window.innerWidth, height: window.innerHeight };
 // 横向きで起動した場合は縦横比が意味をなさないので最小の高さにする
 const gameHeight = size.height >= size.width ? computeGameHeight(size.width, size.height) : computeGameHeight(1, 0);
 

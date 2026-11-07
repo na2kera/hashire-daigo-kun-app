@@ -40,6 +40,13 @@ export const PLAYER_FRAME_HEIGHT = 24;
 export const PLAYER_BODY_WIDTH = 12;
 export const PLAYER_BODY_HEIGHT = 10;
 
+/**
+ * 歩行アニメの向き判定（斜めは横成分優先。DESIGN.md §1 / §13）。
+ * 正規化後の横成分の絶対値がこれ以上なら左右、未満なら上下。
+ * 上下に倒したときの微小な横ぶれで横向きにならないための閾値
+ */
+export const ANIM_HORIZONTAL_THRESHOLD = 0.25;
+
 /** バーチャルスティック */
 export const STICK_DEAD_ZONE = 8;
 export const STICK_MAX_RADIUS = 40;

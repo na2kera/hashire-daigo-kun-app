@@ -219,7 +219,7 @@ public/assets/         Phase 2 の PNG
 以下は Codex の設計レビューで指摘され、採用した決定。§1〜§10 と矛盾する場合は**こちらが優先**。
 
 ### 12.1 表示領域・スケール（§3 の補足）
-- `#game` は `height: 100dvh`（フォールバック `100vh`）、`box-sizing: border-box`、四辺に `padding: env(safe-area-inset-*)`。Phaser の親要素はこの `#game`
+- 外側の `#shell` が safe-area を受け持つ：`height: 100dvh`（フォールバック `100vh`）、`box-sizing: border-box`、四辺に `padding: env(safe-area-inset-*)`。Phaser の親要素はその中の **padding なしの `#game`**（`width: 100%; height: 100%`）。ScaleManager は親を padding 込みで測るため、親に padding を付けると canvas がはみ出す
 - **内部解像度は幅 240 固定、高さは起動時に親要素の縦横比から計算し 400〜520 にクランプ**する（`height = clamp(round(240 * parentH / parentW), 400, 520)`）。黒帯を最小化するため。シーンは `400` を直書きせず **`this.scale.height` / `this.scale.width`** でレイアウトする。HUD は上辺基準、「タップしてスタート」等の下部要素は下辺基準
 - `Scale.FIT` + `autoCenter: CENTER_BOTH` は維持。余った黒帯（canvas 外）はタッチ対象外でよい。`body` の背景は `#1b1b2f`
 - `scale.on('resize')` で：スティック解除、canvas 境界の更新。横向きになったら「縦にしてね」のオーバーレイを HUD に出す（ゲームは止めなくてよい）
@@ -281,3 +281,6 @@ public/assets/         Phase 2 の PNG
 - **教授のスプライトシート**：並びは `down, left, right, up` × 3フレーム（`src/assets/keys.ts`）。プレースホルダーは右向きも個別に描いている（反転ではない）。Phase 2 の `professor.png` もこの並びにするか、変えるなら `keys.ts` を合わせる
 - **横向き案内**：「縦にしてね」はタッチ端末で横向きのときだけ HUD に出す（PC の横長ウィンドウでは出さない）。横向きで起動した場合、内部解像度の高さは 400
 - **共通 UI ヘルパー**：`src/scenes/ui.ts`（文字スタイル・ボタン・registry キー）を §10 の構成に追加
+- **時計の delta**：時計は物理と同じ delta を上限なしで積算する（上限を付けると低速端末で時計だけ遅れる。極端な delta は Phaser の TimeStep が平滑化する）
+- **スティック解除時の停止**：`VirtualStick` は解除（`pointerup(outside)` / blur / hidden / resize）のたびに `onRelease` を同期的に呼び、PlayScene はそこで `player.halt()` する。物理が次の `update()` より先に走るため、ベクトルのゼロ化だけでは旧速度で1フレーム動く。シーン破棄時は呼ばない
+- **斜めのアニメ向き**：§1 の「斜めは横成分優先」は、正規化後の横成分の絶対値が `ANIM_HORIZONTAL_THRESHOLD`（0.25、`config.ts`）以上なら左右、未満なら上下とする。上下に倒したときの微小な横ぶれで横向きにならないための閾値

@@ -24,9 +24,15 @@ export class VirtualStick {
   private knobY = 0;
   private readonly out: StickVector = { x: 0, y: 0 };
   private destroyed = false;
+  private readonly onRelease: (() => void) | undefined;
 
-  constructor(scene: Phaser.Scene, depth: number) {
+  /**
+   * @param onRelease 解除のたびに同期的に呼ぶ。物理は次の update() より先に走るので、
+   *   ここで速度をゼロにしないと旧速度のまま1フレーム動いてしまう
+   */
+  constructor(scene: Phaser.Scene, depth: number, onRelease?: () => void) {
     this.scene = scene;
+    this.onRelease = onRelease;
     this.gfx = scene.add.graphics().setScrollFactor(0).setDepth(depth).setVisible(false);
 
     const input = scene.input;
@@ -49,12 +55,14 @@ export class VirtualStick {
     return this.out;
   }
 
-  /** 操作を解除してベクトルをゼロにする */
+  /** 操作を解除してベクトルをゼロにし、onRelease を同期的に呼ぶ */
   release(): void {
     this.pointerId = null;
     this.out.x = 0;
     this.out.y = 0;
-    if (!this.destroyed) this.gfx.clear().setVisible(false);
+    if (this.destroyed) return;
+    this.gfx.clear().setVisible(false);
+    this.onRelease?.();
   }
 
   private readonly onVisibility = (): void => {
@@ -109,8 +117,9 @@ export class VirtualStick {
 
   destroy(): void {
     if (this.destroyed) return;
-    this.release();
+    // 破棄（シーン終了）時は onRelease を呼ばない：プレイヤーが先に破棄されている可能性がある
     this.destroyed = true;
+    this.release();
     const input = this.scene.input;
     input.off(Phaser.Input.Events.POINTER_DOWN, this.onDown, this);
     input.off(Phaser.Input.Events.POINTER_MOVE, this.onMove, this);

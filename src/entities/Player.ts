@@ -2,6 +2,7 @@
 
 import Phaser from "phaser";
 import {
+  ANIM_HORIZONTAL_THRESHOLD,
   PLAYER_BODY_HEIGHT,
   PLAYER_BODY_WIDTH,
   PLAYER_FRAME_HEIGHT,
@@ -47,9 +48,9 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     y /= len;
     body.setVelocity(x * PLAYER_SPEED, y * PLAYER_SPEED);
 
-    // 4方向アニメ。斜めは横成分優先（DESIGN.md §1）
+    // 4方向アニメ。斜めは横成分優先（DESIGN.md §1）：横成分が閾値以上なら左右、未満なら上下
     const dir: Direction =
-      Math.abs(x) >= Math.abs(y) - 0.001 ? (x < 0 ? "left" : "right") : y < 0 ? "up" : "down";
+      Math.abs(x) >= ANIM_HORIZONTAL_THRESHOLD ? (x < 0 ? "left" : "right") : y < 0 ? "up" : "down";
     this.facing = dir;
     this.anims.play(walkAnimKey(dir), true);
     this.depth = this.y;
@@ -57,6 +58,8 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
 
   /** 速度ゼロにして立ち止まりフレームにする */
   halt(): void {
+    // 入力解除のコールバックから何度・いつ呼ばれても安全にする（破棄後は何もしない）
+    if (!this.body || !this.active) return;
     (this.body as Phaser.Physics.Arcade.Body).setVelocity(0, 0);
     this.anims.stop();
     this.setFrame(idleFrame(this.facing));
