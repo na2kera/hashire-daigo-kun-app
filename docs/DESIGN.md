@@ -169,7 +169,7 @@ Title ──tap──▶ HowTo ──tap──▶ Play ──60秒──▶ Resu
 - スプライトシート規約（Phase 2 で使う）：教授 `professor.png` 16×24 × 4方向 × 歩行3フレーム（計12フレーム）＋腕組み1枚 `professor_idle_title.png`（32×48）。横一列192×24、方向順は `down, left, right, up`、各方向は立ち姿→歩行2枚。足元中央を原点とする
 - アイテムは各8×8、欅・桜は各16×20、植え込みは16×16。全画像は透過RGBA 8bit PNG（非インターレース）
 - 建物は `FACILITIES` の `solid:true` 全21棟（体育館を含む）。幅 `rect.w*16`、高さ `rect.h*16+roofExtra`、原点はfootprint下辺中央。アトリオは地面なのでPNGを作らない
-- 配信URLは `/sprites/<テクスチャキー>.png`。Viteの`dist/assets/`と区別する。`BootScene.preload()`で読み込み、`loaderror`のキーだけ従来のGraphics描画で補う
+- 配信URLは `/sprites/<テクスチャキー>.png`。Viteの`dist/assets/`と区別する。`BootScene.preload()`で読み込み、`loaderror`のキーだけ従来のGraphics描画で補う。`create()`冒頭で予定キーのテクスチャ有無（教授はフレーム0〜11）も確認し、デコード失敗などで欠落したテクスチャも補完する
 
 ## 9. 技術スタック
 - Phaser **4.2.1**、TypeScript、Vite、wrangler（すべて `package.json` で exact 固定。勝手に変えない）

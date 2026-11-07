@@ -1,4 +1,4 @@
-// 本番 PNG を読み込み、失敗したキーだけ従来の描画で補う（DESIGN.md §8）。
+// 本番 PNG を読み込み、失敗・欠落したキーだけ従来の描画で補う（DESIGN.md §8）。
 
 import Phaser from "phaser";
 import { ITEM_DEFS, ITEM_KINDS, PLAYER_FRAME_HEIGHT, PLAYER_FRAME_WIDTH, SCENES, TILE } from "../config";
@@ -34,16 +34,45 @@ export class BootScene extends Phaser.Scene {
       frameWidth: PLAYER_FRAME_WIDTH,
       frameHeight: PLAYER_FRAME_HEIGHT,
     });
-    const imageKeys = [
-      TEX.professorTitle, ...Object.values(ITEM_TEX),
+    for (const key of this.plannedKeys()) {
+      if (key !== TEX.professor) this.load.image(key, `/sprites/${key}.png`);
+    }
+  }
+
+  /** preload() で読み込む全テクスチャキー（教授シートを含む） */
+  private plannedKeys(): string[] {
+    return [
+      TEX.professor, TEX.professorTitle, ...Object.values(ITEM_TEX),
       TEX.treeKeyaki, TEX.treeSakura, TEX.hedge,
       ...FACILITIES.filter((f) => f.solid).map((f) => buildingTexKey(f.id)),
     ];
-    for (const key of imageKeys) this.load.image(key, `/sprites/${key}.png`);
+  }
+
+  /**
+   * loaderror を経ずにテクスチャが作られなかったキーを failedKeys に加える。
+   * HTTP 取得は成功したが画像デコードに失敗した場合（破損 PNG など）は loaderror が発火しないため。
+   */
+  private collectMissingTextures(): void {
+    for (const key of this.plannedKeys()) {
+      if (this.failedKeys.has(key) || this.textures.exists(key)) continue;
+      this.failedKeys.add(key);
+      console.warn(`[assets] ${key} のテクスチャが存在しません：プレースホルダーを使用します`);
+    }
+    // 教授シートはフレーム 0〜11 が揃っていなければ作り直す
+    if (this.failedKeys.has(TEX.professor)) return;
+    const tex = this.textures.get(TEX.professor);
+    const total = DIRECTIONS.length * WALK_FRAMES;
+    for (let i = 0; i < total; i++) {
+      if (tex.has(String(i))) continue;
+      this.failedKeys.add(TEX.professor);
+      console.warn(`[assets] ${TEX.professor} のフレーム ${i} がありません：プレースホルダーを使用します`);
+      return;
+    }
   }
 
   create(): void {
     this.load.off("loaderror", this.onLoadError);
+    this.collectMissingTextures();
     // 失敗したキーにテクスチャが残っている場合だけ、再生成前に除く。
     for (const key of this.failedKeys) {
       if (this.textures.exists(key)) this.textures.remove(key);
