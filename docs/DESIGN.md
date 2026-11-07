@@ -269,3 +269,15 @@ public/assets/         Phase 2 の PNG
 - QR の配布先は **`workers.dev` のドメイン直下**（`base: "/"` のまま）
 - SPA フォールバックは不要なので `wrangler.jsonc` から `not_found_handling` を外す（存在しないパスは 404 でよい）
 - キャッシュは当面 Workers Static Assets の既定（`max-age=0, must-revalidate` + ETag）に任せる。将来 immutable にするならハッシュ付きファイル名のものに限定し、HTML と固定名 PNG には適用しない
+
+## 13. 実装メモ（Phase 1）
+
+実装時に §1〜§12 から細部を変えた点・補った点。
+
+- **時計の評価タイミング**：§12.4 の「`update` の先頭で残り時間を評価」は、Arcade Physics の取得判定（overlap）が Scene の `UPDATE` イベントで `scene.update()` より**前**に走るため、そのままでは締切が優先されない。時計は `PRE_UPDATE` イベント（物理より前）で進め、締切なら `finish()` する
+- **音の解禁リスナー**：§12.2 の「Phaser の `input.on` で全シーン共通のヘルパで登録」の代わりに、`sfx.installAudioUnlock()` が `window` の capture 段で `pointerdown` / `pointerup` / `touchend` / `keydown` を受けて `unlockAudio()` を呼ぶ。シーンごとの登録漏れが起きず、DOM のユーザー操作ハンドラ内で確実に呼ばれるため
+- **終了演出**：`finish()` の ④（スナップショット）と ⑤（HUD stop）の間に 0.9 秒「タイムアップ！」を表示する。この間は物理停止・入力解除済みで、取得は `ended` で無視される
+- **マップの補い**：§5.1 の「入れない」中高エリアを `school_area`（x=1..12, y=19..61）として木立の壁で塗りつぶした。欅並木・参道の木は1タイルおき（横断できるように）、構内道路を塞がないよう y=60 までにした。正門の左右 (49,66)(52,66) は門柱（壁）
+- **教授のスプライトシート**：並びは `down, left, right, up` × 3フレーム（`src/assets/keys.ts`）。プレースホルダーは右向きも個別に描いている（反転ではない）。Phase 2 の `professor.png` もこの並びにするか、変えるなら `keys.ts` を合わせる
+- **横向き案内**：「縦にしてね」はタッチ端末で横向きのときだけ HUD に出す（PC の横長ウィンドウでは出さない）。横向きで起動した場合、内部解像度の高さは 400
+- **共通 UI ヘルパー**：`src/scenes/ui.ts`（文字スタイル・ボタン・registry キー）を §10 の構成に追加
