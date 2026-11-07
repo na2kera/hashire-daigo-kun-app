@@ -1,6 +1,5 @@
 // テクスチャ・アニメーションのキー定数。
-// Phase 2 で public/assets/ の PNG に差し替えるときは、BootScene の生成処理を
-// load.image / load.spritesheet に置き換えるだけで済むよう、キーはここに集約する。
+// public/sprites/ の PNG と BootScene のフォールバック描画で共通のキーを使う。
 
 import type { ItemKind } from "../config";
 

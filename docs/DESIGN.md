@@ -164,9 +164,12 @@ Title ──tap──▶ HowTo ──tap──▶ Play ──60秒──▶ Resu
 - `src/score/submit.ts`：`submitScore(result: GameResult): Promise<void>` を export。**今は何もしない**（コメントで「後で Workers + D1 に POST」と明記）。`ResultScene` から呼ぶ
 
 ## 8. 素材の方針
-- **Phase 1（今）**：`BootScene` で `Graphics` → `generateTexture` によるプレースホルダー。建物は色付き矩形に番号文字、教授は 16×24 の矩形に色分け、アイテムは 8×8 の色違い
-- **Phase 2**：Codex が本番ドット絵を生成し `public/assets/` に PNG として配置。`BootScene` の読み込みを差し替えるだけで済むよう、**テクスチャキーを定数化**して `src/assets/keys.ts` にまとめる
-- スプライトシート規約（Phase 2 で使う）：教授 `professor.png` 16×24 × 4方向 × 歩行3フレーム（計12フレーム）＋腕組み1枚 `professor_idle_title.png`（32×48 でよい）
+- **Phase 1**：`BootScene` で `Graphics` → `generateTexture` によるプレースホルダー。建物は色付き矩形に番号文字、教授は 16×24 の矩形に色分け、アイテムは 8×8 の色違い
+- **Phase 2**：`npm run gen:assets`（`scripts/gen-assets.mjs`、Node 20、追加依存なし）で本番ドット絵を生成し `public/sprites/` に PNG として配置。`BootScene` の読み込みを差し替えるだけで済むよう、**テクスチャキーを定数化**して `src/assets/keys.ts` にまとめる
+- スプライトシート規約（Phase 2 で使う）：教授 `professor.png` 16×24 × 4方向 × 歩行3フレーム（計12フレーム）＋腕組み1枚 `professor_idle_title.png`（32×48）。横一列192×24、方向順は `down, left, right, up`、各方向は立ち姿→歩行2枚。足元中央を原点とする
+- アイテムは各8×8、欅・桜は各16×20、植え込みは16×16。全画像は透過RGBA 8bit PNG（非インターレース）
+- 建物は `FACILITIES` の `solid:true` 全21棟（体育館を含む）。幅 `rect.w*16`、高さ `rect.h*16+roofExtra`、原点はfootprint下辺中央。アトリオは地面なのでPNGを作らない
+- 配信URLは `/sprites/<テクスチャキー>.png`。Viteの`dist/assets/`と区別する。`BootScene.preload()`で読み込み、`loaderror`のキーだけ従来のGraphics描画で補う
 
 ## 9. 技術スタック
 - Phaser **4.2.1**、TypeScript、Vite、wrangler（すべて `package.json` で exact 固定。勝手に変えない）
@@ -203,7 +206,7 @@ src/
 docs/
   DESIGN.md            このファイル
   reference/           公式構内図など
-public/assets/         Phase 2 の PNG
+public/sprites/         Phase 2 の PNG
 ```
 
 ## 11. 完了の定義（Phase 1）

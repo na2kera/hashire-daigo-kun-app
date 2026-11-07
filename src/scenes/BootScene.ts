@@ -1,7 +1,4 @@
-// テクスチャとアニメの準備（DESIGN.md §2 / §8）。
-// Phase 1 はプレースホルダーを Graphics → generateTexture で生成する。
-// Phase 2 で PNG に差し替えるときは preload() で load.spritesheet / load.image を使い、
-// generate* の呼び出しを消すだけで済むよう、キーは assets/keys.ts に集約している。
+// 本番 PNG を読み込み、失敗したキーだけ従来の描画で補う（DESIGN.md §8）。
 
 import Phaser from "phaser";
 import { ITEM_DEFS, ITEM_KINDS, PLAYER_FRAME_HEIGHT, PLAYER_FRAME_WIDTH, SCENES, TILE } from "../config";
@@ -19,13 +16,40 @@ const C = {
 };
 
 export class BootScene extends Phaser.Scene {
+  private readonly failedKeys = new Set<string>();
+
+  private readonly onLoadError = (file: Phaser.Loader.File): void => {
+    this.failedKeys.add(file.key);
+    console.warn(`[assets] ${file.key} の読み込み失敗：プレースホルダーを使用します`);
+  };
+
   constructor() {
     super(SCENES.boot);
   }
 
+  preload(): void {
+    this.failedKeys.clear();
+    this.load.on("loaderror", this.onLoadError);
+    this.load.spritesheet(TEX.professor, `/sprites/${TEX.professor}.png`, {
+      frameWidth: PLAYER_FRAME_WIDTH,
+      frameHeight: PLAYER_FRAME_HEIGHT,
+    });
+    const imageKeys = [
+      TEX.professorTitle, ...Object.values(ITEM_TEX),
+      TEX.treeKeyaki, TEX.treeSakura, TEX.hedge,
+      ...FACILITIES.filter((f) => f.solid).map((f) => buildingTexKey(f.id)),
+    ];
+    for (const key of imageKeys) this.load.image(key, `/sprites/${key}.png`);
+  }
+
   create(): void {
-    this.generateProfessor();
-    this.generateProfessorTitle();
+    this.load.off("loaderror", this.onLoadError);
+    // 失敗したキーにテクスチャが残っている場合だけ、再生成前に除く。
+    for (const key of this.failedKeys) {
+      if (this.textures.exists(key)) this.textures.remove(key);
+    }
+    if (this.failedKeys.has(TEX.professor)) this.generateProfessor();
+    if (this.failedKeys.has(TEX.professorTitle)) this.generateProfessorTitle();
     this.generateItems();
     this.generateTrees();
     this.generateBuildings();
@@ -100,6 +124,7 @@ export class BootScene extends Phaser.Scene {
 
   private generateItems(): void {
     for (const kind of ITEM_KINDS) {
+      if (!this.failedKeys.has(ITEM_TEX[kind])) continue;
       const g = this.gfx();
       const color = ITEM_DEFS[kind].color;
       g.fillStyle(0x000000, 0.6);
@@ -133,6 +158,7 @@ export class BootScene extends Phaser.Scene {
 
   private generateTrees(): void {
     const tree = (key: string, crown: number, crownDark: number): void => {
+      if (!this.failedKeys.has(key)) return;
       const g = this.gfx();
       g.fillStyle(0x6b4a2b, 1);
       g.fillRect(7, 13, 2, 7);
@@ -146,6 +172,7 @@ export class BootScene extends Phaser.Scene {
     tree(TEX.treeKeyaki, 0x4f9a3c, 0x2f6e2a);
     tree(TEX.treeSakura, 0xf6b6c8, 0xe08aa6);
 
+    if (!this.failedKeys.has(TEX.hedge)) return;
     const g = this.gfx();
     g.fillStyle(0x2f6e2a, 1);
     g.fillRoundedRect(0, 2, TILE, TILE - 2, 4);
@@ -161,7 +188,7 @@ export class BootScene extends Phaser.Scene {
 
   private generateBuildings(): void {
     for (const f of FACILITIES) {
-      if (!f.solid) continue;
+      if (!f.solid || !this.failedKeys.has(buildingTexKey(f.id))) continue;
       const g = this.gfx();
       const w = f.rect.w * TILE;
       const h = f.rect.h * TILE + f.roofExtra;
