@@ -10,7 +10,7 @@
     "deploy:dry": "npm run build && wrangler deploy --dry-run"
   },
   "license": "UNLICENSED",
-  "private": "true",
+  "private": true,
   "type": "module",
   "dependencies": {
     "phaser": "4.2.1"
