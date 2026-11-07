@@ -1,8 +1,20 @@
 // ゲーム全体の定数。数値の調整はここだけで完結させる。
 
-/** 内部解像度（縦持ち）。Scale.FIT で画面に合わせて拡大する */
+/**
+ * 内部解像度（縦持ち）。幅は 240 固定、高さは起動時に親要素の縦横比から
+ * 400〜520 の範囲で決める（DESIGN.md §12.1）。Scale.FIT で画面に合わせて拡大する。
+ * シーンは高さを直書きせず this.scale.width / this.scale.height を使うこと。
+ */
 export const GAME_WIDTH = 240;
-export const GAME_HEIGHT = 400;
+export const GAME_HEIGHT_MIN = 400;
+export const GAME_HEIGHT_MAX = 520;
+
+/** 親要素（padding を除いた内容領域）のサイズから内部解像度の高さを決める */
+export function computeGameHeight(parentWidth: number, parentHeight: number): number {
+  if (!(parentWidth > 0) || !(parentHeight > 0)) return GAME_HEIGHT_MIN;
+  const h = Math.round((GAME_WIDTH * parentHeight) / parentWidth);
+  return Math.min(GAME_HEIGHT_MAX, Math.max(GAME_HEIGHT_MIN, h));
+}
 
 /** タイル1枚のピクセル数 */
 export const TILE = 16;
@@ -58,8 +70,10 @@ export const ITEM_DEFS: Record<ItemKind, ItemDef> = {
 export const ITEM_KINDS: readonly ItemKind[] = ["paper", "textbook", "fund"];
 
 /** 画面で使うフォント */
-export const FONT_FAMILY =
-  '"Hiragino Kaku Gothic ProN", "Hiragino Sans", "Noto Sans JP", "Meiryo", sans-serif';
+export const FONT_FAMILY = '"Hiragino Sans", "Hiragino Kaku Gothic ProN", "Noto Sans JP", sans-serif';
+
+/** 文字の最小サイズ（内部座標の px）。DESIGN.md §12.9 */
+export const MIN_FONT_SIZE = 10;
 
 /** シーンキー */
 export const SCENES = {

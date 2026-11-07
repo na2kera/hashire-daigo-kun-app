@@ -66,7 +66,7 @@ export interface TreeLine {
 
 export const FACILITIES: readonly Facility[] = [
   { no: 0, id: "honkan", name: "本館", rect: { x: 46, y: 40, w: 10, h: 6 }, color: 0xa0442c, roofColor: 0xf2ece0, roofExtra: 16, solid: true },
-  { no: 1, id: "b1", name: "1号館", rect: { x: 47, y: 30, w: 6, h: 4 }, color: 0xd9c49a, roofColor: 0xb8a57c, roofExtra: 10, solid: true },
+  { no: 1, id: "b1", name: "1号館", rect: { x: 48, y: 30, w: 6, h: 4 }, color: 0xd9c49a, roofColor: 0xb8a57c, roofExtra: 10, solid: true },
   { no: 2, id: "b2", name: "2号館", rect: { x: 46, y: 24, w: 6, h: 4 }, color: 0xc9a27e, roofColor: 0xa88466, roofExtra: 8, solid: true },
   { no: 3, id: "b3", name: "3号館", rect: { x: 33, y: 34, w: 6, h: 4 }, color: 0xb5664a, roofColor: 0x8e4d38, roofExtra: 10, solid: true },
   { no: 4, id: "b4", name: "4号館", rect: { x: 24, y: 40, w: 6, h: 5 }, color: 0xb98a6a, roofColor: 0x6d8f6a, roofExtra: 10, solid: true },
@@ -81,10 +81,10 @@ export const FACILITIES: readonly Facility[] = [
   { no: 13, id: "w1", name: "西一号館", rect: { x: 20, y: 65, w: 8, h: 5 }, color: 0xa4523e, roofColor: 0xe8e0d0, roofExtra: 12, solid: true },
   { no: 14, id: "library", name: "情報図書館", rect: { x: 32, y: 54, w: 10, h: 6 }, color: 0x9fd4e8, roofColor: 0xffffff, roofExtra: 12, solid: true },
   { no: 15, id: "kaikan", name: "学生会館", rect: { x: 54, y: 26, w: 5, h: 6 }, color: 0xe8dcc8, roofColor: 0x3d7cc9, roofExtra: 8, solid: true },
-  { no: 16, id: "truss", name: "トラスコンガーデン", rect: { x: 54, y: 34, w: 5, h: 5 }, color: 0x9c5a3c, roofColor: 0x5a5a5a, roofExtra: 10, solid: true },
+  { no: 16, id: "truss", name: "トラスコンガーデン", rect: { x: 55, y: 34, w: 4, h: 5 }, color: 0x9c5a3c, roofColor: 0x5a5a5a, roofExtra: 10, solid: true },
   { no: 17, id: "health", name: "大学保健室", rect: { x: 14, y: 21, w: 4, h: 3 }, color: 0xe0d0b8, roofColor: 0xb09c80, roofExtra: 6, solid: true },
   { no: 18, id: "intl", name: "国際交流会館", rect: { x: 10, y: 65, w: 5, h: 4 }, color: 0xe4dccb, roofColor: 0xb6ab96, roofExtra: 8, solid: true },
-  { no: 19, id: "atrio", name: "アトリオ", rect: { x: 36, y: 31, w: 10, h: 10 }, color: 0x8fcf6a, roofColor: 0x8fcf6a, roofExtra: 0, solid: false },
+  { no: 19, id: "atrio", name: "アトリオ", rect: { x: 39, y: 30, w: 8, h: 10 }, color: 0x8fcf6a, roofColor: 0x8fcf6a, roofExtra: 0, solid: false },
   { no: 20, id: "archives", name: "学園史料館", rect: { x: 54, y: 46, w: 5, h: 4 }, color: 0x9a5a40, roofColor: 0x6e3e2c, roofExtra: 12, solid: true },
   { no: null, id: "gym", name: "大学体育館", rect: { x: 25, y: 4, w: 8, h: 6 }, color: 0xd8d0c0, roofColor: 0x6a9ad0, roofExtra: 14, solid: true },
 ];
@@ -95,8 +95,8 @@ export const FACILITIES: readonly Facility[] = [
 
 export const GROUND_AREAS: readonly GroundArea[] = [
   { id: "keyaki_ground", name: "けやきグラウンド", kind: "track", rect: { x: 2, y: 2, w: 20, h: 13 } },
-  { id: "atrio_lawn", name: "アトリオ", kind: "grass", rect: { x: 36, y: 31, w: 10, h: 10 } },
-  { id: "honkan_front", name: "本館前庭", kind: "grass", rect: { x: 44, y: 47, w: 14, h: 14 } },
+  { id: "atrio_lawn", name: "アトリオ", kind: "grass", rect: { x: 39, y: 30, w: 8, h: 10 } },
+  { id: "honkan_front", name: "本館前庭", kind: "grass", rect: { x: 44, y: 47, w: 10, h: 14 } },
   { id: "sando", name: "参道（欅）", kind: "plaza", rect: { x: 50, y: 48, w: 2, h: 18 } },
   { id: "keyaki_avenue", name: "欅並木", kind: "avenue", rect: { x: 20, y: 18, w: 3, h: 46 } },
   { id: "campus_road", name: "構内道路", kind: "asphalt", rect: { x: 0, y: 62, w: 60, h: 2 } },
@@ -121,9 +121,8 @@ export const WALLS: readonly WallArea[] = [
   { id: "edge_e", name: "外周", look: "outside", rect: { x: 59, y: 0, w: 1, h: 80 } },
   // 中学・高校の領域（§5.1「入れない」）。木で塗りつぶす
   { id: "school_area", name: "敷地外（中高）", look: "outside", rect: { x: 1, y: 19, w: 12, h: 43 } },
-  // 五日市街道とその南（敷地外）
-  { id: "itsukaichi", name: "五日市街道", look: "road", rect: { x: 0, y: 74, w: 60, h: 3 } },
-  { id: "south_outside", name: "敷地外", look: "outside", rect: { x: 0, y: 77, w: 60, h: 3 } },
+  // 五日市街道とその南。y≥74 は全て敷地外（到達不能な通路を残さない）
+  { id: "itsukaichi", name: "五日市街道（敷地外）", look: "road", rect: { x: 0, y: 74, w: 60, h: 6 } },
   // 大学正門の門柱
   { id: "gate_pillar_w", name: "正門の門柱", look: "pillar", rect: { x: 49, y: 66, w: 1, h: 1 } },
   { id: "gate_pillar_e", name: "正門の門柱", look: "pillar", rect: { x: 52, y: 66, w: 1, h: 1 } },
@@ -204,12 +203,15 @@ export const FUND_SPAWNS: readonly TilePoint[] = [
   { x: 13, y: 60 }, // 西の端
 ];
 
-/** 教科書（3点）の候補：各施設の入口付近（footprint の南辺のすぐ外）。アトリオは中央 */
-export const TEXTBOOK_SPAWNS: readonly TilePoint[] = FACILITIES.filter((f) => f.no !== null).map((f) =>
-  f.solid
-    ? { x: f.rect.x + Math.floor(f.rect.w / 2), y: f.rect.y + f.rect.h }
-    : { x: f.rect.x + Math.floor(f.rect.w / 2), y: f.rect.y + Math.floor(f.rect.h / 2) },
-);
+/**
+ * 教科書（3点）の候補：建物20棟＋体育館の入口付近（footprint の南辺のすぐ外、中央）。
+ * アトリオ（19）は建物ではないので置かない（DESIGN.md §12.6）。
+ * 南辺が通路に面していない建物ができたら、ここで個別に上書きする。
+ */
+export const TEXTBOOK_SPAWNS: readonly TilePoint[] = FACILITIES.filter((f) => f.solid).map((f) => ({
+  x: f.rect.x + Math.floor(f.rect.w / 2),
+  y: f.rect.y + f.rect.h,
+}));
 
 // ---------------------------------------------------------------------------
 // データから導出するヘルパー（Phaser 非依存）
@@ -242,25 +244,78 @@ export function collisionRects(): TileRect[] {
   return rects;
 }
 
-function containsTile(r: TileRect, p: TilePoint): boolean {
-  return p.x >= r.x && p.x < r.x + r.w && p.y >= r.y && p.y < r.y + r.h;
+/** タイルごとの通行不可フラグ（cols×rows、1=通行不可） */
+export function blockedGrid(cols: number, rows: number): Uint8Array {
+  const grid = new Uint8Array(cols * rows);
+  for (const r of collisionRects()) {
+    for (let y = Math.max(0, r.y); y < Math.min(rows, r.y + r.h); y++) {
+      for (let x = Math.max(0, r.x); x < Math.min(cols, r.x + r.w); x++) {
+        grid[y * cols + x] = 1;
+      }
+    }
+  }
+  return grid;
 }
 
-/** スポーン候補のうち、衝突矩形と重なっている・マップ外のものを返す（デバッグ用） */
-export function findBlockedSpawns(cols: number, rows: number): { group: string; at: TilePoint }[] {
-  const rects = collisionRects();
+/** start から上下左右に BFS して到達できるタイル（1=到達可） */
+function reachableGrid(grid: Uint8Array, cols: number, rows: number, start: TilePoint): Uint8Array {
+  const seen = new Uint8Array(cols * rows);
+  const inMap = (x: number, y: number): boolean => x >= 0 && y >= 0 && x < cols && y < rows;
+  if (!inMap(start.x, start.y) || grid[start.y * cols + start.x]) return seen;
+  const queue: number[] = [start.y * cols + start.x];
+  seen[start.y * cols + start.x] = 1;
+  for (let head = 0; head < queue.length; head++) {
+    const i = queue[head] as number;
+    const x = i % cols;
+    const y = (i - x) / cols;
+    const next: [number, number][] = [[x + 1, y], [x - 1, y], [x, y + 1], [x, y - 1]];
+    for (const [nx, ny] of next) {
+      if (!inMap(nx, ny)) continue;
+      const j = ny * cols + nx;
+      if (grid[j] || seen[j]) continue;
+      seen[j] = 1;
+      queue.push(j);
+    }
+  }
+  return seen;
+}
+
+/**
+ * マップとスポーン候補のデバッグチェック（DESIGN.md §5.4 / §12.6）。問題の説明文の配列を返す。
+ * ①候補が衝突矩形と重ならない・マップ内 ②候補が全種類で一意
+ * ③開始地点からの BFS で全候補に到達可能 ④到達不能な通行可タイルが 0
+ */
+export function validateCampus(cols: number, rows: number): string[] {
+  const problems: string[] = [];
+  const grid = blockedGrid(cols, rows);
+  const reach = reachableGrid(grid, cols, rows, START_TILE);
   const groups: [string, readonly TilePoint[]][] = [
     ["start", [START_TILE]],
     ["paper", PAPER_SPAWNS],
     ["textbook", TEXTBOOK_SPAWNS],
     ["fund", FUND_SPAWNS],
   ];
-  const blocked: { group: string; at: TilePoint }[] = [];
+  const used = new Map<string, string>();
   for (const [group, points] of groups) {
     for (const p of points) {
-      const outOfMap = p.x < 0 || p.y < 0 || p.x >= cols || p.y >= rows;
-      if (outOfMap || rects.some((r) => containsTile(r, p))) blocked.push({ group, at: p });
+      const where = `${group} (${p.x}, ${p.y})`;
+      if (p.x < 0 || p.y < 0 || p.x >= cols || p.y >= rows) {
+        problems.push(`マップ外の候補: ${where}`);
+        continue;
+      }
+      const i = p.y * cols + p.x;
+      if (grid[i]) problems.push(`通行不可の場所にある候補: ${where}`);
+      else if (!reach[i]) problems.push(`開始地点から到達できない候補: ${where}`);
+      const key = `${p.x},${p.y}`;
+      const prev = used.get(key);
+      if (prev !== undefined) problems.push(`候補タイルの重複: ${where} と ${prev}`);
+      else used.set(key, group);
     }
   }
-  return blocked;
+  let unreachable = 0;
+  for (let i = 0; i < grid.length; i++) {
+    if (!grid[i] && !reach[i]) unreachable++;
+  }
+  if (unreachable > 0) problems.push(`開始地点から到達できない通行可タイルが ${unreachable} 個あります`);
+  return problems;
 }
