@@ -1,0 +1,11 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "hashire-daigo-kun-app",
+  "compatibility_date": "2026-11-01",
+  // 静的アセットのみの配信。将来ランキング API を足すときは "main" を追加して
+  // Worker を追加し、/api/* 以外をアセットにフォールバックさせる。
+  "assets": {
+    "directory": "./dist",
+    "not_found_handling": "single-page-application"
+  }
+}
